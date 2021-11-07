@@ -65,11 +65,13 @@ if __name__ == '__main__':
         if (has_glasses > (TH+0.4)): 
             outpath = os.path.join(args.images_path, "1", os.path.basename(path))
             print(outpath)
+            os.rename(path, outpath)
         elif(has_glasses < (TH-0.4)):
             outpath = os.path.join(args.images_path, "0", os.path.basename(path))
             print(outpath)
+            os.rename(path, outpath)
         else: pass
-        os.rename(path, outpath)
+
         counter += 1
     
 
