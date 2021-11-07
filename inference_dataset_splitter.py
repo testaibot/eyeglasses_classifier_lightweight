@@ -60,7 +60,7 @@ if __name__ == '__main__':
         has_glasses = model(img_tensor.to(device).unsqueeze(0))  # Pr(has glasses | face_image)
         t_accum += time.time() - t_start
 		
-        if (has_glasses > 3): 
+        if (has_glasses > 5): 
             outpath = os.path.join(args.images_path, "1", os.path.basename(path))
             print(outpath)
             os.rename(path, outpath)
