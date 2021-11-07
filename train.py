@@ -100,35 +100,6 @@ if __name__ == '__main__':
 
     
     folds = mk_k_folds(images, k=5, batch_size=BATCH_SIZE)
-    # ============ Train Cumbersome Model ===============
-    print('Resnet18 Regular Training ...')
-    fold_scores = []
-    for fold_n, (train_loader, val_loader) in enumerate(folds): # loop over folds
-        print(f'Start fold #{fold_n + 1} ...')
-        print(f'Train is {len(train_loader) * BATCH_SIZE} length')
-        print(f'Val   is {len(val_loader) * BATCH_SIZE} length')
-        model = torchvision.models.resnet18(pretrained=True)
-        model.fc = torch.nn.Linear(512, 1)
-        model.num_classes = 1
-        model.to(device)
-        optimizer = torch.optim.Adam(model.parameters(), lr=LR)
-        stop_criteria = StopCriteria()
-        for epoch in range(0, MAX_EPOCH):
-            model.train()
-            avg_loss, score = train_cycle(train_loader, model, optimizer, device)
-            print(epoch, 'TRAIN', round(avg_loss, 3), round(score, 3))
-            model.eval()
-            with torch.no_grad():
-                avg_loss, score = train_cycle(val_loader, model, optimizer, device, backprop=False)
-            print(epoch, 'VAL  ', round(avg_loss, 3), round(score, 3))
-            if stop_criteria.check(round(avg_loss, 4), round(score, 4), model):
-                print("Stop training. Score hasn't improved.")
-                break
-        print("Best score is", round(stop_criteria.best_score, 3))
-        fold_scores.append(stop_criteria.best_score)
-        torch.save(stop_criteria.get_best_model_params(), './resnet_params')
-
-    print(f'E[score] = {round(np.mean(fold_scores), 3)}, Var[score] = {round(np.std(fold_scores), 3)}')
     
     
     # ============ SqueezeNet Regular Training =================
@@ -139,14 +110,8 @@ if __name__ == '__main__':
         print(f'Start fold #{fold_n + 1} ...')
         print(f'Train is {len(train_loader) * BATCH_SIZE} length')
         print(f'Val   is {len(val_loader) * BATCH_SIZE} length')
-        model = torchvision.models.squeezenet1_1(pretrained=True)
-        model.classifier = torch.nn.Sequential(
-            torch.nn.Dropout(p=0.5),
-            torch.nn.Conv2d(512, 1, kernel_size=(1, 1), stride=(1, 1)),
-            torch.nn.ReLU(),
-            torch.nn.AvgPool2d(kernel_size=13, stride=1, padding=0)
-        )
-        model.num_classes = 1
+        model = torchvision.models.squeezenet1_1(pretrained=False, num_classes = 1)
+
         model.to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=LR)
         stop_criteria = StopCriteria()
