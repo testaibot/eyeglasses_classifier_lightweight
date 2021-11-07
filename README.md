@@ -35,7 +35,7 @@ Table 2. Inference time for single image
 To train our model, we used images of size 120x120 from [MeGlass](https://github.com/cleardusk/MeGlass) dataset. We took just 900 samples of each class. 
 To train model we put our samples to "0" and "1" folders. Both of these folders must be located at the same common folder.
 
-To to pseudo-label a new dataset run 
+To pseudo-label a new dataset run 
 ```sh
 git clone https://github.com/acheshkov/eyeglasses_classifier_lightweight.git
 pip install -r requirements.txt
